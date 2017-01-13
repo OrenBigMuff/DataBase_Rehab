@@ -1,5 +1,7 @@
 package oren_bigmuff.com.database_rehab;
 
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -106,6 +108,22 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+        String tag = (String)v.getTag();
 
+        
+    }
+
+    //メッセージダイアログの定義
+    public static class MessageDialog extends DialogFragment{
+        //ダイアログの表示
+        public static void show(
+                Activity activity, String title, String text){
+            MessageDialog f = new MessageDialog();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("text", text);
+            f.setArguments(args);
+            f.show(activity.getFragmentManager(), "MessageDialog");
+        }
     }
 }

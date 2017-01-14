@@ -1,14 +1,17 @@
 package oren_bigmuff.com.database_rehab;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public Bitmap res2bmp(Context context, int resID) {
         return BitmapFactory.decodeResource(
-                context.getResources(),resID);
+                context.getResources(), resID);
     }
 
     //ボタンの生成
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     //イメージボタンの生成
-    private ImageButton makeButton(Bitmap bmp, String tag){
+    private ImageButton makeButton(Bitmap bmp, String tag) {
         ImageButton button = new ImageButton(this);
         button.setTag(tag);
         button.setOnClickListener(this);
@@ -108,22 +112,129 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        String tag = (String)v.getTag();
+        String tag = (String) v.getTag();
 
-        
+        if (TAG_MESSAGE.equals(tag)) {
+            MessageDialog.show(this, "メッセージダイアログ", "ボタンを押した");
+        } else if (TAG_YESNO.equals((tag))) {
+
+        } else if (TAG_TEXT.equals(tag)) {
+
+        } else if (TAG_IMAGE.equals(tag)) {
+
+        }
     }
 
     //メッセージダイアログの定義
-    public static class MessageDialog extends DialogFragment{
+    public static class MessageDialog extends DialogFragment {
         //ダイアログの表示
         public static void show(
-                Activity activity, String title, String text){
+                Activity activity, String title, String text) {
             MessageDialog f = new MessageDialog();
             Bundle args = new Bundle();
             args.putString("title", title);
             args.putString("text", text);
             f.setArguments(args);
-            f.show(activity.getFragmentManager(), "MessageDialog");
+            f.show(activity.getFragmentManager(), "messageDialog");
+        }
+
+        //ダイアログの生成
+        @Override
+        public Dialog onCreateDialog(Bundle bundle) {
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setTitle(getArguments().getString("title"));
+            ad.setMessage(getArguments().getString("text"));
+            ad.setPositiveButton("OK", null);
+            return ad.create();
         }
     }
+
+    //Yes/Noダイアログの定義
+    public static class YesNoDialog extends DialogFragment {
+        //ダイアログの表示
+        public static void show(
+            Activity activity, String title, String text) {
+            YesNoDialog f = new YesNoDialog();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("text", text);
+            f.setArguments(args);
+            f.show(activity.getFragmentManager(), "yesNoDialog");
+        }
+        //Yes/Noダイアログの生成
+        @Override
+        public Dialog onCreateDialog(Bundle bundle) {
+            //リスナーの生成
+            DialogInterface.OnClickListener listener =
+                    new DialogInterface.OnClickListener() {
+                        //ダイアログボタン押下時に呼ばれる
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                MessageDialog.show(getActivity(), "", "YES");
+                            } else if (which == DialogInterface.BUTTON_NEGATIVE) {
+                                MessageDialog.show(getActivity(), "", "NO");
+                            }
+                        }
+            };
+            //Yes/Noダイアログの生成
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setTitle(getArguments().getString("title"));
+            ad.setMessage(getArguments().getString("text"));
+            ad.setPositiveButton("Yes", listener);
+            ad.setNegativeButton("No", listener);
+            return ad.create();
+        }
+    }
+
+    //テキスト入力ダイアログの定義
+    public static class TextDialog extends DialogFragment {
+        private EditText editText;
+
+        //ダイアログの表示
+        public static void show(
+                Activity activity, String title, String text) {
+            TextDialog f = new TextDialog();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("text", text);
+            f.setArguments(args);
+            f.show(activity.getFragmentManager(), "textDialog");
+        }
+
+        //テキスト入力ダイアログの生成
+        @Override
+        public Dialog onCreateDialog(Bundle bundle) {
+            //リスナーの生成
+            DialogInterface.OnClickListener listener =
+                    new DialogInterface.OnClickListener() {
+                        //ダイアログボタン押下時に呼ばれる
+                        public void onClick(DialogInterface dialog, int which) {
+                            MessageDialog.show(getActivity(), "", editText.getText().toString());
+                        }
+                    };
+
+            //エディットテキストの生成
+            editText = new EditText(getActivity());
+
+            //テキスト入力ダイアログの生成
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setTitle(getArguments().getString("title"));
+            ad.setMessage(getArguments().getString("text"));
+            ad.setView(editText);
+            ad.setPositiveButton("OK", listener);
+
+            //フラグメントの状態復帰
+            if (bundle != null) editText.setText(bundle.getString("editText", ""));
+
+            return ad.create();
+        }
+
+        //フラグメントの状態保存
+        @Override
+        public void onSaveInstanceState(Bundle bundle) {
+            super.onSaveInstanceState(bundle);
+            bundle.putString("editText", editText.getText().toString());
+        }
+    }
+
 }

@@ -13,7 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
+//import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity implements
     private final static String TAG_IMAGE = "3";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //Layoutの生成
         LinearLayout layout = new LinearLayout(this);
@@ -43,8 +43,9 @@ public class MainActivity extends AppCompatActivity implements
         layout.setOrientation(LinearLayout.VERTICAL);
         setContentView(layout);
         //Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+
         //Buttonの生成
         layout.addView(makeButton("メッセージダイアログの表示", TAG_MESSAGE));
         layout.addView(makeButton("Yes/Noダイアログの表示", TAG_YESNO));
@@ -52,14 +53,14 @@ public class MainActivity extends AppCompatActivity implements
         layout.addView(makeButton(res2bmp(this, R.drawable.sample), TAG_IMAGE));
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
     }
 
     public Bitmap res2bmp(Context context, int resID) {
@@ -117,11 +118,11 @@ public class MainActivity extends AppCompatActivity implements
         if (TAG_MESSAGE.equals(tag)) {
             MessageDialog.show(this, "メッセージダイアログ", "ボタンを押した");
         } else if (TAG_YESNO.equals((tag))) {
-
+            YesNoDialog.show(this, "Yes/Noダイアログ", "Yes/Noを選択");
         } else if (TAG_TEXT.equals(tag)) {
-
+            TextDialog.show(this, "テキスト入力ダイアログ", "テキストを入力");
         } else if (TAG_IMAGE.equals(tag)) {
-
+            MessageDialog.show(this, "", "イメージボタンを押した");
         }
     }
 
